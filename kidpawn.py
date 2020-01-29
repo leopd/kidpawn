@@ -41,14 +41,24 @@ def pick_move(b:Board, score_func=score_move) -> Move:
             return reference_score > new_score
     for move in b.legal_moves:
         score = score_func(b, move)
-        print(f"{move} gives {score}. ", end='')
+        #print(f"{move} gives {score}. ", end='')
         if better(best_score, score):
             best_score = score
             best_moves = [move]
         elif score == best_score:
             best_moves.append(move)
 
-    print(f"\nBest moves are {best_moves} scoring {best_score}")
+    #print(f"\nBest moves are {best_moves} scoring {best_score}")
     return random.choice(best_moves)
 
+
+
+def self_play(b:Board):
+
+    while not b.is_game_over():
+        m = pick_move(b)
+        print(f"\nMaking move {m}")
+        b.push(m)
+        print(b)
+    print("\n\nGame Over")
 
