@@ -1,3 +1,5 @@
+import random
+
 import chess
 from chess import Board, Move
 
@@ -27,16 +29,26 @@ def score_material(b:Board) -> int:
     return total
     
 
-def consider_moves(b:Board, score_func=score_move) -> Move:
+def pick_move(b:Board, score_func=score_move) -> Move:
     best_score = None
     best_moves = None
+    def better(reference_score, new_score) -> bool:
+        if reference_score is None:
+            return True
+        if b.turn == chess.WHITE:
+            return new_score > reference_score
+        else:
+            return reference_score > new_score
     for move in b.legal_moves:
         score = score_func(b, move)
-        print(f"considering {move} gives {score}")
-        if (best_score is None) or (score > best_score):
+        print(f"{move} gives {score}. ", end='')
+        if better(best_score, score):
             best_score = score
             best_moves = [move]
         elif score == best_score:
             best_moves.append(move)
-    return best_moves
+
+    print(f"\nBest moves are {best_moves} scoring {best_score}")
+    return random.choice(best_moves)
+
 
