@@ -121,6 +121,6 @@ def self_play(b:Board):
         print(b)
 
     result = b.result()
-    print("\n\nGame Over: {result}")
-    return result
+    print(f"\n\nGame Over: {result}")
+    return result, b
 
