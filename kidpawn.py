@@ -75,6 +75,40 @@ def pick_move(b:Board, score_func=score_material_and_win, verbose:bool=False) ->
     return random.choice(best_moves)
 
 
+def lookahead1_move(original:Board, verbose:bool=False) -> Move:
+    """Looks ahead one move
+    """
+    best_score = None
+    best_moves = None
+    def is_better(reference_score, new_score) -> bool:
+        if reference_score is None:
+            return True
+        if original.turn == chess.WHITE:
+            return new_score > reference_score
+        else:
+            return reference_score > new_score
+    my_moves = list(original.legal_moves)
+    for my_move in my_moves:
+        b = original.copy()
+        b.push(my_move)
+        if b.is_game_over():
+            score = score_material_and_win(b)
+        else:
+            their_move = pick_move(b)
+            b.push(their_move)
+            score = score_material_and_win(b)
+        if verbose:
+            print(f"{my_move} then {their_move} gives {score}.")
+        if is_better(best_score, score):
+            best_score = score
+            best_moves = [my_move]
+        elif score == best_score:
+            best_moves.append(my_move)
+
+    if verbose:
+        print(f"\nBest moves are {best_moves} scoring {best_score}")
+    return random.choice(best_moves)
+
 def self_play(b:Board):
 
     while not b.is_game_over():
