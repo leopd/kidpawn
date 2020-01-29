@@ -24,6 +24,8 @@ def score_material(b:Board) -> int:
 
 
 def score_material_and_win(b:Board) -> int:
+    if b.can_claim_draw():
+        return 0
     if b.is_game_over():
         res = b.result()
         if res == '1/2-1/2':
@@ -46,9 +48,12 @@ def score_move(b:Board, m:Move, score_func) -> int:
         b.pop()
 
 def pick_move(b:Board, score_func=score_material_and_win, verbose:bool=False) -> Move:
+    """Enumerate all valid moves, and pick the one most advantageous to the current player
+    according to the specified score_func.
+    """
     best_score = None
     best_moves = None
-    def better(reference_score, new_score) -> bool:
+    def is_better(reference_score, new_score) -> bool:
         if reference_score is None:
             return True
         if b.turn == chess.WHITE:
@@ -59,7 +64,7 @@ def pick_move(b:Board, score_func=score_material_and_win, verbose:bool=False) ->
         score = score_move(b, move, score_func)
         if verbose:
             print(f"{move} gives {score}.")
-        if better(best_score, score):
+        if is_better(best_score, score):
             best_score = score
             best_moves = [move]
         elif score == best_score:
@@ -70,10 +75,12 @@ def pick_move(b:Board, score_func=score_material_and_win, verbose:bool=False) ->
     return random.choice(best_moves)
 
 
-
 def self_play(b:Board):
 
     while not b.is_game_over():
+        if b.can_claim_draw():
+            print("Draw")
+            break
         m = pick_move(b)
         print(f"\nMaking move {m}")
         b.push(m)
