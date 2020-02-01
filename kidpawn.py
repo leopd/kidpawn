@@ -159,3 +159,9 @@ class Kidpawn():
             traceback.print_exc()
             return False, f"unknown error {e}"
 
+    def self_play(self):
+        """Computer makes a move herself, and updates the boardj
+        """
+        m = lookahead1_move(self.b)
+        return self.move(m.uci())
+

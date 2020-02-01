@@ -10,10 +10,10 @@ def display():
     kp = Kidpawn(old_fen)
 
     if move:
-        try:
-            success, msg = kp.move(move)
-        except Exception as e:
-            msg = str(e)
+        success, msg = kp.move(move)
+        if success:
+            #TODO: show them their own move first somehow.  javascript or something.
+            kp.self_play()
     else:
         msg = "your turn"
     board_svg = kp.svg()
