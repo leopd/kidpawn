@@ -124,3 +124,22 @@ def self_play(b:Board):
     print(f"\n\nGame Over: {result}")
     return result, b
 
+
+class Kidpawn():
+
+    def __init__(self, board_fen:str=None):
+        if board_fen is None:
+            # Not sure why this is needed.
+            self.b = Board()
+        else:
+            self.b = Board(board_fen)
+
+    def svg(self):
+        return self.b._repr_svg_()
+
+    def fen(self):
+        """Returns board state as a FEN string
+        """
+        return self.b.fen()
+            
+
