@@ -1,3 +1,6 @@
+import random
+import time
+
 from flask import Flask, request
 app = Flask("kidpawn")
 
@@ -5,6 +8,7 @@ from kidpawn import Kidpawn
 
 @app.route('/')
 def display():
+    random.seed(int(time.time() / 1000))  # slow-moving seed so reload doesn't get you a better move
     old_fen = request.args.get('board')
     move = request.args.get('move')
     kp = Kidpawn(old_fen)
@@ -19,18 +23,23 @@ def display():
     board_svg = kp.svg()
     board_fen = kp.fen()
     form = f"""
-            <form>
-                Enter your move: <input name="move" />
-                <input type="hidden" name="board" value="{board_fen}" />
-                <input type="submit" value="Move" />
-            </form>
+        <form>
+            Enter your move: 
+            <input name="move" type="text" placeholder="like d2d4 or h7h8q" 
+                autofocus="autofocus"
+                />
+            <input type="hidden" name="board" value="{board_fen}" />
+            <input type="submit" value="Move" />
+        </form>
     """
     if kp.game_over_msg():
         msg = kp.game_over_msg()
-        form = ""
+        form = """
+            <a href="/">New Game</a>
+        """
+
     return f"""
         <html>
-            <h1>Kidpawn</h1>
             {board_svg}
             <br/>
             <h3>{msg}</h3>
@@ -39,4 +48,4 @@ def display():
     """
 
 if __name__=='__main__':
-    app.run()
+    app.run(host='0.0.0.0')
