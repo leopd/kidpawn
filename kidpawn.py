@@ -108,7 +108,11 @@ def lookahead1_move(original:Board, verbose:bool=False) -> Move:
 
     if verbose:
         print(f"\nBest moves are {best_moves} scoring {best_score}")
-    return random.choice(best_moves)
+    if best_moves:
+        return random.choice(best_moves)
+    else:
+        print("No valid moves to pick from")
+        return None
 
 def self_play(b:Board):
 
@@ -163,5 +167,17 @@ class Kidpawn():
         """Computer makes a move herself, and updates the boardj
         """
         m = lookahead1_move(self.b)
-        return self.move(m.uci())
+        if m:
+            return self.move(m.uci())
+        else:
+            return False, "No valid moves"
+
+    def game_over_msg(self) -> str:
+        """If the game is over, returns a string why.
+        If game is not over, return blank
+        """
+        if self.b.is_game_over():
+            return f"Game over: {self.b.result()}"
+        else:
+            return None
 
