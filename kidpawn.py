@@ -1,4 +1,5 @@
 import random
+import traceback
 
 import chess
 from chess import Board, Move
@@ -128,11 +129,11 @@ def self_play(b:Board):
 class Kidpawn():
 
     def __init__(self, board_fen:str=None):
-        if board_fen is None:
+        if board_fen:
+            self.b = Board(board_fen)
+        else:
             # Not sure why this is needed.
             self.b = Board()
-        else:
-            self.b = Board(board_fen)
 
     def svg(self):
         return self.b._repr_svg_()
@@ -141,5 +142,20 @@ class Kidpawn():
         """Returns board state as a FEN string
         """
         return self.b.fen()
-            
+
+    def move(self, move:str) -> [bool, str]:
+        """Returns true if the move succeeded
+        """
+        try:
+            self.b.push_uci(move)
+            return True, "ok"
+        except ValueError as e:
+            msg = str(e)
+            if msg.startswith("illegal uci"):
+                return False, "illegal move"
+            else:
+                return False, f"other error {msg}"
+        except Exception as e:
+            traceback.print_exc()
+            return False, f"unknown error {e}"
 
