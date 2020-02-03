@@ -25,7 +25,7 @@ def display():
     form = f"""
         <form>
             Enter your move: 
-            <input name="move" type="text" placeholder="like d2d4 or h7h8q" 
+            <input name="move" id="movebox" type="text" placeholder="like d2d4 or h7h8q" 
                 autofocus="autofocus"
                 />
             <input type="hidden" name="board" value="{board_fen}" />
@@ -38,12 +38,20 @@ def display():
             <a href="/">New Game</a>
         """
 
+    myscript = open('script.js').read()
+
     return f"""
         <html>
+          <head>
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            {myscript}
+          </head>
+          <body>
             {board_svg}
             <br/>
             <h3>{msg}</h3>
             {form}
+          <body>
         </html>
     """
 
