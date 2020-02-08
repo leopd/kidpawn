@@ -17,7 +17,7 @@ def display():
         success, msg = kp.move(move)
         if success:
             #TODO: show them their own move first somehow.  javascript or something.
-            kp.self_play()
+            kp.bot_move()
     else:
         msg = "your turn"
     board_svg = kp.svg()

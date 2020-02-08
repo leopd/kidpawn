@@ -39,18 +39,28 @@ def score_material_and_win(b:Board) -> int:
             raise RuntimeException(f"Unknown result {res}")
     else:
         return score_material(b)
-    
-def score_move(b:Board, m:Move, score_func) -> int:
+
+def score_board(b:Board) -> float:
+    """Returns a score for the board.
+    Uses the board's own score function (my_score) if monkey-patched in,
+    else uses score_material_and_win by default
+    """
+    if hasattr(b,'my_score'):
+        return b.my_score()
+    else:
+        return score_material_and_win(b)
+
+
+def score_move(b:Board, m:Move) -> float:
     b.push(m)
     try:
-        score = score_func(b)
+        score = score_board(b)
         return score
     finally:
         b.pop()
 
-def pick_move(b:Board, score_func=score_material_and_win, verbose:bool=False) -> Move:
+def pick_move(b:Board, verbose:bool=False) -> Move:
     """Enumerate all valid moves, and pick the one most advantageous to the current player
-    according to the specified score_func.
     """
     best_score = None
     best_moves = None
@@ -62,7 +72,7 @@ def pick_move(b:Board, score_func=score_material_and_win, verbose:bool=False) ->
         else:
             return reference_score > new_score
     for move in b.legal_moves:
-        score = score_move(b, move, score_func)
+        score = score_move(b, move)
         if verbose:
             print(f"{move} gives {score}.")
         if is_better(best_score, score):
@@ -93,11 +103,11 @@ def lookahead1_move(original:Board, verbose:bool=False) -> Move:
         b = original.copy()
         b.push(my_move)
         if b.is_game_over():
-            score = score_material_and_win(b)
+            score = score_board(b)
         else:
             their_move = pick_move(b)
             b.push(their_move)
-            score = score_material_and_win(b)
+            score = score_board(b)
         if verbose:
             print(f"{my_move} then {their_move} gives {score}.")
         if is_better(best_score, score):
@@ -163,8 +173,8 @@ class Kidpawn():
             traceback.print_exc()
             return False, f"unknown error {e}"
 
-    def self_play(self):
-        """Computer makes a move herself, and updates the boardj
+    def bot_move(self):
+        """Computer makes a move herself, and updates the board
         """
         m = lookahead1_move(self.b)
         if m:
