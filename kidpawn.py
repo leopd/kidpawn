@@ -4,6 +4,9 @@ import traceback
 import chess
 from chess import Board, Move
 
+class HEURISTIC:
+    PAWN_PROMOTION = 4.3
+
 
 def score_material(b:Board) -> int:
     """Returns sum(white) - sum(black)
@@ -21,6 +24,28 @@ def score_material(b:Board) -> int:
             p = b.pieces(piece_type, color)
             num_p = len(p)
             total += sign * num_p * strengths[piece_type]
+    return total
+
+
+def _pawn_distance_to_promote(position:int, color:bool):
+    """Returns the number of moves this pawn must make before it 
+    gets promoted.  Position is an int 0-63, and color is chess.WHITE or chess.BLACK
+    """
+    assert position in range(64)
+    rank = (position // 8) + 1  # 1-8
+    if color == chess.WHITE:
+        return 8-rank
+    else:
+        return rank
+
+def pawn_position_bonus(b:Board) -> float:
+    """Returns white - black advantage just for pawn position.
+    """
+    total = 0
+    for color, sign in [(chess.WHITE, 1), (chess.BLACK, -1)]:
+        for pawn in b.pieces(chess.PAWN, color):
+            dist = _pawn_distance_to_promote(pawn, sign)
+            total += sign * HEURISTIC.PAWN_PROMOTION / dist
     return total
 
 
@@ -166,7 +191,7 @@ class Kidpawn():
         except ValueError as e:
             msg = str(e)
             if msg.startswith("illegal uci"):
-                return False, "illegal move"
+                return False, f"illegal move: {move}.  Try something like d2d4 or h7h8q."
             else:
                 return False, f"other error {msg}"
         except Exception as e:

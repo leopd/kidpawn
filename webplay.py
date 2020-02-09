@@ -10,7 +10,7 @@ from kidpawn import Kidpawn
 def display():
     random.seed(int(time.time() / 1000))  # slow-moving seed so reload doesn't get you a better move
     old_fen = request.args.get('board')
-    move = request.args.get('move')
+    move = request.args.get('move').lower()
     kp = Kidpawn(old_fen)
 
     if move:
@@ -25,7 +25,7 @@ def display():
     form = f"""
         <form>
             Enter your move: 
-            <input name="move" id="movebox" type="text" placeholder="like d2d4 or h7h8q" 
+            <input name="move" id="movebox" type="text" placeholder="like D2D4 or h7h8q" 
                 autofocus="autofocus"
                 />
             <input type="hidden" name="board" value="{board_fen}" />
