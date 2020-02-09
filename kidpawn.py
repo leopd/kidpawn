@@ -187,7 +187,7 @@ class Kidpawn():
         """
         try:
             self.b.push_uci(move)
-            return True, "ok"
+            return True, f"you moved: {move}"
         except ValueError as e:
             msg = str(e)
             if msg.startswith("illegal uci"):
