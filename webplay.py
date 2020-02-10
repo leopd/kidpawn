@@ -10,7 +10,9 @@ from kidpawn import Kidpawn
 def display():
     random.seed(int(time.time() / 1000))  # slow-moving seed so reload doesn't get you a better move
     old_fen = request.args.get('board')
-    move = request.args.get('move').lower()
+    move = request.args.get('move')
+    if move:
+        move = move.lower()
     kp = Kidpawn(old_fen)
 
     if move:
