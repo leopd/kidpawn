@@ -1,5 +1,4 @@
 import pytest
-from tqdm.auto import tqdm
 
 import kidpawn
 from chess import Board
@@ -23,7 +22,7 @@ def test_selfplay():
     kp = kidpawn.Kidpawn()
     _kp_sane(kp)
 
-    for games in tqdm(range(2), desc="games"):
-        for moves in tqdm(range(7), desc="moves"):
+    for games in range(2):
+        for moves in range(7):
             kp.bot_move()
             _kp_sane(kp)
